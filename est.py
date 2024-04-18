@@ -26,6 +26,7 @@ from utils.GTSRB import GTSRB
 from utils.model_zoo import ResNet18, SimpleNet
 from utils.util import pert_est_class_pair, data_split, pm_est_class_pair
 from utils.ImageNette import Imagenette
+from torchvision.models.resnet import resnet18
 
 parser = argparse.ArgumentParser(description='Reverse engineer backdoor pattern')
 parser.add_argument("--mode", default="pert", type=str)
@@ -108,7 +109,7 @@ elif config["DATASET"] == "imagenette":
 NC = config["NUM_CLASS"]     # Number of classes
 # NI = 20     # Number of images per class used for detection
 print("Num trials : {}, Misclassification : {}, # Images: {}".format(TRIAL, PI, NI))
-model = ResNet18(num_classes=NC) if config["DATASET"] == "cifar10" or config["DATASET"] == "imagenette" else SimpleNet()
+model = resnet18(num_classes=NC) if config["DATASET"] == "cifar10" or config["DATASET"] == "imagenette" else SimpleNet()
 model = model.to(device)
 model.load_state_dict(torch.load('./attacks/{}/{}/{}/{}/model_contam.pt'.format(config['DATASET'], config['SETTING'], config['PATTERN_TYPE'],config["RUN"]), map_location=torch.device(device))["model"])
 model.eval()

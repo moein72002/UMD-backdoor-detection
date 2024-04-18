@@ -26,6 +26,7 @@ from utils.ImageNette import Imagenette
 from utils.GTSRB import GTSRB
 from utils.model_zoo import ResNet18, SimpleNet
 from utils.util import pert_est_class_pair, data_split
+from torchvision.models.resnet import resnet18
 
 parser = argparse.ArgumentParser(description='Test transferability of estimated perturbation')
 parser.add_argument("--mode", default="patch", type=str)
@@ -72,7 +73,7 @@ if config["DATASET"] == "cifar10":
     config["NUM_CLASS"] = 10
     transform_test = transforms.Compose([transforms.ToTensor()])
     detectset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
-    model = ResNet18(num_classes=10)
+    model = resnet18(num_classes=10)
 elif config["DATASET"] == "gtsrb":
     config["NUM_CLASS"] = 43
     transform_test = transforms.Compose([
