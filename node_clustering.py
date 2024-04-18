@@ -239,6 +239,9 @@ print(scores)
 num_detected = 0
 ind = []
 for i in range(len(scores)):
+    print(f"i: {i}")
+    print(f"scores[i]: {scores[i]}")
+    print(f"theta_set[i]: {theta_set[i]}")
     if scores[i] > theta_set[i]:
         num_detected += 1
 print("Number of detected models: {}".format(num_detected))
