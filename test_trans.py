@@ -124,7 +124,7 @@ else:
         target = label.to(device)
         i = i.to(device)
         with torch.no_grad():
-            _, _, outputs = model(img)
+            outputs = model(img)
             _, predicted = outputs.max(1)
         correct.extend(i[predicted.eq(target)].cpu().numpy())
         targets.extend(target[predicted.eq(target)].cpu().numpy())
@@ -155,7 +155,7 @@ for t in range(NC):
                     images_perturbed = torch.clamp(images + pert, min=0, max=1)
                 elif args.mode == 'patch':
                     images_perturbed = torch.clamp(images * (1 - mask) + pattern * mask, min=0, max=1)
-                _, _, outputs = model(images_perturbed)
+                outputs = model(images_perturbed)
                 _, predicted = outputs.max(1)
             freq = torch.zeros((NC,))
             predicted = predicted.cpu()

@@ -446,7 +446,7 @@ def pert_est_class_pair(source, target, model, images, labels, pi=0.9, lr=1e-4, 
 
         # Get the loss
         images_perturbed = torch.clamp(images + pert, min=0, max=1)
-        _, _, outputs = model(images_perturbed)
+        outputs = model(images_perturbed)
         loss = criterion(outputs, labels)
 
         # Update perturbation
@@ -458,7 +458,7 @@ def pert_est_class_pair(source, target, model, images, labels, pi=0.9, lr=1e-4, 
         misclassification = 0
         with torch.no_grad():
             images_perturbed = torch.clamp(images + pert, min=0, max=1)
-            _, _, outputs = model(images_perturbed)
+            outputs = model(images_perturbed)
             _, predicted = outputs.max(1)
             misclassification += predicted.eq(labels).sum().item()
             rho = misclassification / len(labels)
@@ -537,7 +537,7 @@ def pm_est_class_pair(images, model, target, labels, pi=0.9, device='cuda', batc
         images_with_bd = torch.clamp(images * (1 - mask) + pattern * mask, min=0, max=1)
 
         # Feed the image with the backdoor into the classifier, and get the loss
-        _, _, outputs = model(images_with_bd)
+        outputs = model(images_with_bd)
         loss = criterion(outputs, labels)
 
         # Update the pattern and mask (for 1 step)
@@ -560,7 +560,7 @@ def pm_est_class_pair(images, model, target, labels, pi=0.9, device='cuda', batc
             # Embed the backdoor pattern
             images_with_bd = torch.clamp(images * (1 - mask) + pattern * mask, min=0, max=1)
 
-            _, _, outputs = model(images_with_bd)
+            outputs = model(images_with_bd)
             _, predicted = outputs.max(1)
             misclassification += predicted.eq(labels).sum().item()
             total += len(labels)
@@ -606,7 +606,7 @@ def pm_est_class_pair(images, model, target, labels, pi=0.9, device='cuda', batc
         images_with_bd = torch.clamp(images * (1 - mask) + pattern * mask, min=0, max=1)
 
         # Feed the image with the backdoor into the classifier, and get the loss
-        _, _, outputs = model(images_with_bd)
+        outputs = model(images_with_bd)
         loss = criterion(outputs, labels)
 
         # Add the loss corresponding to the L1 constraint
@@ -627,7 +627,7 @@ def pm_est_class_pair(images, model, target, labels, pi=0.9, device='cuda', batc
             # Embed the pattern
             images_with_bd = torch.clamp(images * (1 - mask) + pattern * mask, min=0, max=1)
 
-            _, _, outputs = model(images_with_bd)
+            outputs = model(images_with_bd)
             _, predicted = outputs.max(1)
             misclassification += predicted.eq(labels).sum().item()
             total += len(labels)

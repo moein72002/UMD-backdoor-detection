@@ -140,7 +140,7 @@ else:
         target = label.to(device)
         i = i.to(device)
         with torch.no_grad():
-            _, _, outputs = model(img)
+            outputs = model(img)
             _, predicted = outputs.max(1)
         correct.extend(i[predicted.eq(target)].cpu().numpy())
         targets.extend(target[predicted.eq(target)].cpu().numpy())
