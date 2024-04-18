@@ -110,7 +110,7 @@ NC = config["NUM_CLASS"]     # Number of classes
 print("Num trials : {}, Misclassification : {}, # Images: {}".format(TRIAL, PI, NI))
 model = ResNet18(num_classes=NC) if config["DATASET"] == "cifar10" or config["DATASET"] == "imagenette" else SimpleNet()
 model = model.to(device)
-model.load_state_dict(torch.load('./attacks/{}/{}/{}/{}/model_contam.pt'.format(config['DATASET'], config['SETTING'], config['PATTERN_TYPE'],config["RUN"]), map_location=torch.device(device)))
+model.load_state_dict(torch.load('./attacks/{}/{}/{}/{}/model_contam.pt'.format(config['DATASET'], config['SETTING'], config['PATTERN_TYPE'],config["RUN"]), map_location=torch.device(device))["model"])
 model.eval()
 correct_path = os.path.join(ckpt_path, "correct.npy")
 target_path = os.path.join(ckpt_path, "targets.npy")

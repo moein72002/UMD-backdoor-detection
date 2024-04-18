@@ -90,7 +90,7 @@ elif config["DATASET"] == "imagenette":
     detectset = Imagenette(root='./data/imagenette2', train=False, transform=transform_test)
     model = ResNet18(num_classes=10)
 model = model.to(device)
-model.load_state_dict(torch.load(os.path.join(model_path, 'model_contam.pt'),  map_location=torch.device(device)))
+model.load_state_dict(torch.load(os.path.join(model_path, 'model_contam.pt'),  map_location=torch.device(device))["model"])
 model.eval()
 NC = config["NUM_CLASS"]     # Number of classes
 NI = 10  
