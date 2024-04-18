@@ -237,14 +237,14 @@ def eval_attack(attackloader):
     return asr
 
 
-for epoch in range(config['EPOCH']):
-    print('epoch: {}'.format(epoch))
-    model_contam = train(epoch)
-    acc = eval_clean()
-    asr = eval_attack(attackloader)
-config["ASR"] = asr
-config["ACC"] = acc
-# Save model
-torch.save(model_contam.state_dict(), './attacks/{}/{}/{}/{}/model_contam.pth'.format(config['DATASET'], config['SETTING'], config['PATTERN_TYPE'],config["RUN"]))
+# for epoch in range(config['EPOCH']):
+#     print('epoch: {}'.format(epoch))
+#     model_contam = train(epoch)
+#     acc = eval_clean()
+#     asr = eval_attack(attackloader)
+# config["ASR"] = asr
+# config["ACC"] = acc
+# # Save model
+# torch.save(model_contam.state_dict(), './attacks/{}/{}/{}/{}/model_contam.pth'.format(config['DATASET'], config['SETTING'], config['PATTERN_TYPE'],config["RUN"]))
 with open('./attacks/{}/{}/{}/{}/config.json'.format(config['DATASET'], config['SETTING'], config['PATTERN_TYPE'],config["RUN"]), 'w') as f:
     json.dump(config, f)
