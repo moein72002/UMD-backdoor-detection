@@ -20,7 +20,7 @@ import shutil
 import argparse
 from utils.GTSRB import GTSRB
 from utils.ImageNette import Imagenette
-from utils.util import poison, data_split, create_data, AttackDataset, data_remove
+from utils.util import poison, data_split, create_data, AttackDataset, data_remove, get_transform
 from utils.model_zoo import SimpleNet
 from torchvision.models.resnet import resnet18
 
@@ -70,7 +70,11 @@ if config["DATASET"] == "cifar10":
         transform_train = transforms.Compose([
                                         transforms.ToTensor(),
                                         ])
-    transform_test = transforms.Compose([transforms.ToTensor()])
+    input_height = 32
+    input_width = 32
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
     testset, _ = data_split(testset, 'evaluation', ratio=config['SPLIT_RATIO'])
@@ -82,10 +86,11 @@ elif config["DATASET"] == "gtsrb":
         transforms.ToTensor(),
     ])
 
-    transform_test = transforms.Compose([
-        transforms.Resize([32, 32]),
-        transforms.ToTensor(),
-    ])
+    input_height = 32
+    input_width = 32
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
 
     trainset = GTSRB(root='./data', split='train', download=False, transform=transform_train)
     testset = GTSRB(root='./data', split='test', download=False, transform=transform_test)
@@ -97,10 +102,11 @@ elif config["DATASET"] == "imagenette":
         transforms.ToTensor(),
     ])
 
-    transform_test = transforms.Compose([
-        transforms.Resize([224, 224]),
-        transforms.ToTensor(),
-    ])
+    input_height = 224
+    input_width = 224
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
         
     trainset = Imagenette(root='./data/imagenette2', train=True, transform=transform_train)
     testset = Imagenette(root='./data/imagenette2', train=False, transform=transform_test)
