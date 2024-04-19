@@ -16,7 +16,11 @@ from .ImageNette import Imagenette
 def create_data(config):
     if config["DATASET"] == "cifar10":
         transform_train = transforms.Compose([transforms.ToTensor()])
-        transform_test = transforms.Compose([transforms.ToTensor()])
+        input_height = 32
+        input_width = 32
+        train = False
+        transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height,
+                                       input_width=input_width, train=train)
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
         testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
         testset, _ = data_split(testset, 'evaluation', ratio=config['SPLIT_RATIO'])
@@ -26,10 +30,11 @@ def create_data(config):
             transforms.ToTensor(),
         ])
 
-        transform_test = transforms.Compose([
-            transforms.Resize([32, 32]),
-            transforms.ToTensor(),
-        ])
+        input_height = 32
+        input_width = 32
+        train = False
+        transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height,
+                                       input_width=input_width, train=train)
         trainset = GTSRB(root='./data', split='train', download=True, transform=transform_train)
         testset = GTSRB(root='./data', split='test', download=True, transform=transform_test)
     elif config["DATASET"] == "imagenette":
@@ -38,10 +43,11 @@ def create_data(config):
             transforms.ToTensor(),
         ])
 
-        transform_test = transforms.Compose([
-            transforms.Resize([224, 224]),
-            transforms.ToTensor(),
-        ])
+        input_height = 224
+        input_width = 224
+        train = False
+        transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height,
+                                       input_width=input_width, train=train)
 
         trainset = Imagenette(root='./data/imagenette2', train=True, transform=transform_train)
         testset = Imagenette(root='./data/imagenette2', train=False, transform=transform_test)
@@ -686,4 +692,43 @@ class AttackDataset(Dataset):
     def __getitem__(self, idx):
 
         return self.image[idx], self.label[idx]
+
+def get_dataset_normalization(dataset_name):
+    # idea : given name, return the default normalization of images in the dataset
+    if dataset_name == "cifar10":
+        # from wanet
+        dataset_normalization = (transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]))
+    elif dataset_name == 'cifar100':
+        '''get from https://gist.github.com/weiaicunzai/e623931921efefd4c331622c344d8151'''
+        dataset_normalization = (transforms.Normalize([0.5071, 0.4865, 0.4409], [0.2673, 0.2564, 0.2762]))
+    elif dataset_name == "mnist":
+        dataset_normalization = (transforms.Normalize([0.5], [0.5]))
+    elif dataset_name == 'tiny':
+        dataset_normalization = (transforms.Normalize([0.4802, 0.4481, 0.3975], [0.2302, 0.2265, 0.2262]))
+    elif dataset_name == "gtsrb" or dataset_name == "celeba":
+        dataset_normalization = transforms.Normalize([0, 0, 0], [1, 1, 1])
+    elif dataset_name == 'imagenet':
+        dataset_normalization = (
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            )
+        )
+    else:
+        raise Exception("Invalid Dataset")
+    return dataset_normalization
+
+def get_transform(dataset_name = "cifar10", input_height = 32, input_width = 32, train = False, random_crop_padding=4):
+    # idea : given name, return the final implememnt transforms for the dataset
+    transforms_list = []
+    transforms_list.append(transforms.Resize((input_height, input_width)))
+    if train:
+        transforms_list.append(transforms.RandomCrop((input_height, input_width), padding=random_crop_padding))
+        # transforms_list.append(transforms.RandomRotation(10))
+        if dataset_name == "cifar10":
+            transforms_list.append(transforms.RandomHorizontalFlip())
+
+    transforms_list.append(transforms.ToTensor())
+    transforms_list.append(get_dataset_normalization(dataset_name))
+    return transforms.Compose(transforms_list)
 

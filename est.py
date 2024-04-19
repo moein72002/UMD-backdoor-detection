@@ -24,7 +24,7 @@ import time
 import json
 from utils.GTSRB import GTSRB
 from utils.model_zoo import SimpleNet
-from utils.util import pert_est_class_pair, data_split, pm_est_class_pair
+from utils.util import pert_est_class_pair, data_split, pm_est_class_pair, get_transform
 from utils.ImageNette import Imagenette
 from torchvision.models.resnet import resnet18
 
@@ -78,7 +78,10 @@ if config["DATASET"] == "cifar10":
         TRIAL = 5
         NI = 20
     LR = 1e-5
-    transform_test = transforms.Compose([transforms.ToTensor()])
+    input_height = 32
+    input_width = 32
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width, train=train)
     detectset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
 elif config["DATASET"] == "gtsrb":
     config["NUM_CLASS"] = 43
@@ -87,10 +90,11 @@ elif config["DATASET"] == "gtsrb":
         TRIAL = 3
         NI = 20
     LR = 1e-3
-    transform_test = transforms.Compose([
-        transforms.Resize([32, 32]),
-        transforms.ToTensor(),
-    ])
+    input_height = 32
+    input_width = 32
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
     detectset = GTSRB(root='./data', split='test', download=False, transform=transform_test)
 elif config["DATASET"] == "imagenette":
     config["NUM_CLASS"] = 10
@@ -99,10 +103,11 @@ elif config["DATASET"] == "imagenette":
     if args.mode == "patch":
         TRIAL = 5
         NI = 20
-    transform_test = transforms.Compose([
-        transforms.Resize([224, 224]),
-        transforms.ToTensor(),
-    ])
+    input_height = 224
+    input_width = 224
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
     detectset = Imagenette(root='./data/imagenette2', train=False, transform=transform_test)
 
 # Detection parameters

@@ -25,7 +25,7 @@ import time
 from utils.ImageNette import Imagenette
 from utils.GTSRB import GTSRB
 from utils.model_zoo import SimpleNet
-from utils.util import pert_est_class_pair, data_split
+from utils.util import pert_est_class_pair, data_split, get_transform
 from torchvision.models.resnet import resnet18
 
 parser = argparse.ArgumentParser(description='Test transferability of estimated perturbation')
@@ -71,23 +71,29 @@ print("Detect: {}, Dataset: {}, Mode: {}, Type: {},  Run: {}".format(args.mode, 
 print('==> Preparing data..')
 if config["DATASET"] == "cifar10":
     config["NUM_CLASS"] = 10
-    transform_test = transforms.Compose([transforms.ToTensor()])
+    input_height = 32
+    input_width = 32
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
     detectset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
     model = resnet18(num_classes=10)
 elif config["DATASET"] == "gtsrb":
     config["NUM_CLASS"] = 43
-    transform_test = transforms.Compose([
-        transforms.Resize([32, 32]),
-        transforms.ToTensor(),
-    ])
+    input_height = 32
+    input_width = 32
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
     detectset = GTSRB(root='./data', split='test', download=False, transform=transform_test)
     model = SimpleNet()
 elif config["DATASET"] == "imagenette":
     config["NUM_CLASS"] = 10
-    transform_test = transforms.Compose([
-        transforms.Resize([224, 224]),
-        transforms.ToTensor(),
-    ])
+    input_height = 224
+    input_width = 224
+    train = False
+    transform_test = get_transform(dataset_name=config["DATASET"], input_height=input_height, input_width=input_width,
+                                   train=train)
     detectset = Imagenette(root='./data/imagenette2', train=False, transform=transform_test)
     model = resnet18(num_classes=10)
 model = model.to(device)
