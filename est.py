@@ -151,6 +151,8 @@ images_all = []
 ind_all = []
 for c in range(NC):
     ind = [correct[i] for i, label in enumerate(targets) if label == c]
+    print(f"len(ind): {len(ind)}")
+    print(f"NI: {NI}")
     ind = np.random.choice(ind, NI, replace=False)
     images_all.append(torch.stack([detectset[i][0] for i in ind]))
     ind_all.append(ind)
