@@ -23,7 +23,7 @@ import numpy as np
 import time
 import json
 from utils.GTSRB import GTSRB
-from utils.model_zoo import ResNet18, SimpleNet
+from utils.model_zoo import SimpleNet
 from utils.util import pert_est_class_pair, data_split, pm_est_class_pair
 from utils.ImageNette import Imagenette
 from torchvision.models.resnet import resnet18

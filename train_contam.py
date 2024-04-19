@@ -21,7 +21,8 @@ import argparse
 from utils.GTSRB import GTSRB
 from utils.ImageNette import Imagenette
 from utils.util import poison, data_split, create_data, AttackDataset, data_remove
-from utils.model_zoo import ResNet18, SimpleNet
+from utils.model_zoo import SimpleNet
+from torchvision.models.resnet import resnet18
 
 # Load attack configuration
 parser = argparse.ArgumentParser(description='Test transferability of estimated perturbation')
@@ -147,7 +148,7 @@ attackloader = torch.utils.data.DataLoader(testset_attacks, batch_size=128, shuf
 
 # Model
 if config["DATASET"] == "cifar10":
-    net = ResNet18(num_classes=10) 
+    net = resnet18(num_classes=10)
     net = net.to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -163,7 +164,7 @@ elif config["DATASET"] == "gtsrb":
     optimizer = torch.optim.Adam(net.parameters(), lr=1e-3)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1)
 elif config["DATASET"] == "imagenette":
-    net = ResNet18(num_classes=10) 
+    net = resnet18(num_classes=10)
     net = net.to(device)
 
     criterion = nn.CrossEntropyLoss()

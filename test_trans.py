@@ -24,7 +24,7 @@ import numpy as np
 import time
 from utils.ImageNette import Imagenette
 from utils.GTSRB import GTSRB
-from utils.model_zoo import ResNet18, SimpleNet
+from utils.model_zoo import SimpleNet
 from utils.util import pert_est_class_pair, data_split
 from torchvision.models.resnet import resnet18
 
@@ -89,7 +89,7 @@ elif config["DATASET"] == "imagenette":
         transforms.ToTensor(),
     ])
     detectset = Imagenette(root='./data/imagenette2', train=False, transform=transform_test)
-    model = ResNet18(num_classes=10)
+    model = resnet18(num_classes=10)
 model = model.to(device)
 model.load_state_dict(torch.load(os.path.join(model_path, 'model_contam.pt'),  map_location=torch.device(device))["model"])
 model.eval()
