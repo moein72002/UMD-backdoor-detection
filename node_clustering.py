@@ -11,6 +11,7 @@ import numpy as np
 from utils.clustering_utils import compute_score, compute_score_combined
 from scipy import special
 import json
+import pickle
 
 parser = argparse.ArgumentParser(description='Test transferability of estimated perturbation')
 parser.add_argument("--mode", default="patch", type=str)
@@ -19,6 +20,7 @@ parser.add_argument("--SETTING", default="", type=str)
 parser.add_argument("--ATTACK", default="", type=str)
 parser.add_argument("--DEVICE", default=-1, type=int)
 parser.add_argument("--DATASET", default="", type=str)
+parser.add_argument("--RESULT_PATH", default="", type=str)
 args = parser.parse_args()
 
 # Load attack configuration
@@ -236,12 +238,20 @@ print("Threshold is: ")
 print(theta_set)
 print("Score is: ")
 print(scores)
+
+results_dict = {
+    "scores": scores,
+    "Thresholds": theta_set
+}
+
+with open(config["RESULT_PATH"], 'wb') as handle:
+    pickle.dump(results_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+print("Dictionary has been saved to", config["RESULT_PATH"])
+
 num_detected = 0
 ind = []
 for i in range(len(scores)):
-    print(f"i: {i}")
-    print(f"scores[i]: {scores[i]}")
-    print(f"theta_set[i]: {theta_set[i]}")
     if scores[i] > theta_set[i]:
         num_detected += 1
 print("Number of detected models: {}".format(num_detected))
