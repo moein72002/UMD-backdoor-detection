@@ -134,6 +134,8 @@ else:
     correct = []
     targets = []
     bs = 128
+    print(f"len(imgs): {len(imgs)}")
+    print(f"len(labels): {len(labels)}")
     for img, label, i in zip(imgs.chunk(math.ceil(len(imgs) / bs)),
                                 labels.chunk(math.ceil(len(imgs) / bs)), index.chunk(math.ceil(len(imgs) / bs))):
         img = img.to(device)
