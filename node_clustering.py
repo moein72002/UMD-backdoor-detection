@@ -27,6 +27,8 @@ args = parser.parse_args()
 with open('config.json') as config_file:
     config = json.load(config_file)
 
+config["RESULT_PATH"] = args.RESULT_PATH
+
 if args.RUN >= 0:
     config["RUN"] = args.RUN
 if args.DEVICE >= 0:
